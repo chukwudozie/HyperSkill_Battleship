@@ -10,7 +10,7 @@ public class BattleShipExceptions {
     }
 
     static class WrongShipLocation extends IllegalArgumentException {
-        public static final String MESSAGE = "Error! Wrong ship location! Try again:";
+        public static final String MESSAGE = "Error! You entered wrong location please change coordinates and try again:";
 
         public WrongShipLocation(){
             super(MESSAGE);

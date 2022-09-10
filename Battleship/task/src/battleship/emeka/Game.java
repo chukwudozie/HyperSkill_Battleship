@@ -11,7 +11,9 @@ public class Game {
 // This map converts the x - coordinate from characters to their number equivalence
      static final Map<Character, Integer> COORDINATES = Arrays.stream(new Object [][]{
             {'A', 1}, {'B', 2}, {'C', 3}, {'D', 4}, {'E', 5},
-            {'F', 6}, {'G', 7}, {'H', 8}, {'I', 9}, {'J', 10}
+            {'F', 6}, {'G', 7}, {'H', 8}, {'I', 9}, {'J', 10},
+            {'a', 1}, {'b', 2}, {'c', 3}, {'d', 4}, {'e', 5},
+            {'f', 6}, {'g', 7}, {'h', 8}, {'i', 9}, {'j', 10}
     }).collect(Collectors.toMap(point ->(Character)point[0], point -> (Integer) point[1]));
 
 
@@ -19,16 +21,19 @@ public class Game {
         boolean checkX = x >= 1 && x <= 10;
         boolean checkY = y >= 1 && y <= 10;
         if (!checkX || !checkY) {
+            System.out.println("Sorry the coordinates wither less than 1 or greater than 10");
             throw new WrongCoordinatesException();
         }
     }
 
     void validateShipLocation(String shipType, int numberOfCells, int x1, int x2, int y1, int y2) {
+        System.out.println("I entered ship location validation");
          if ((x1 == x2) == (y1 == y2)) throw new WrongShipLocation();
         if ((x1 == x2 && Math.abs(y1 - y2) != numberOfCells - 1)
                 || (y1 == y2 && Math.abs(x1 - x2) != numberOfCells - 1)) {
             throw new BadCoordinateLengthException(shipType);
         }
+        System.out.println("I came out from ship location validation");
 
     }
 
@@ -53,6 +58,7 @@ public class Game {
                 || y - 1 >= 1 && "O".equals(player.getGameField()[x][y - 1])) {
             throw new ShipsTooCloseException();
         }
+        System.out.println("Position specified is good"+x+" "+y);
     }
 
     void startGame(){
@@ -80,8 +86,22 @@ public class Game {
         player.getGameField()[coordinate.getX()][coordinate.getY()] = "O";
     }
 
-    void positionPlayerShip(Player player, Scanner scanner) {
+    void positionPlayerShips(Player player, Scanner scanner) {
         System.out.println("Player "+player.getNumber()+", place ships (5) on the play field");
+        for (ShipType type: ShipType.values()){
+            printGameField(player);
+            System.out.println("Enter the coordinates of the "+type.getName()+" ("+type.getNumberOfCells()+"):");
+            boolean readValue = false;
+            while (!readValue) {
+                String []playerInputs = scanner.nextLine().split("\\s+");
+                System.out.println();
+                readValue = placeShip(player,type,playerInputs);
+                printGameField(player);
+                System.out.println();
+            }
+        }
+        System.out.println("Press Enter and pass the move to another player");
+        scanner.nextLine();
     }
 
     void printGameField(Player player){
@@ -90,49 +110,46 @@ public class Game {
          }
     }
 
-    void placeShip(Player player, Scanner scanner) {
 
-        // Loop through all the available ship types and prompt user to enter coordinate to place each ship
-        for (ShipType ship: ShipType.values()) {
-            printGameField(player);
-            System.out.println("Enter the coordinates of the "+ship.getName()+" ("+ship.getNumberOfCells()+"):");
-            boolean readValue = false;
-
-            while (!readValue) {
-               String []playerInputs = scanner.nextLine().split("\\s+");
-                System.out.println();
-
-                readValue = placeShip(player,ship,playerInputs);
-            }
-        }
-    }
 
     private boolean placeShip(Player player, ShipType type, String[] playerInputs) {
         //Get the coordinates of the ship from the user input eg A1 B1 = (1,1) (2,1)
+        boolean flag = true;
+
         try {
+            System.out.println(" I cam here 1");
             int x1 = COORDINATES.get(playerInputs[0].charAt(0));
             int x2 = COORDINATES.get(playerInputs[1].charAt(0));
             int y1 = Integer.parseInt(playerInputs[0].substring(1));
             int y2 = Integer.parseInt(playerInputs[1].substring(1));
+            System.out.println("I came here 2");
             validateCoordinate(x1, y1);
             validateCoordinate(x2, y2);
+            System.out.println("I came here 3");
             // Sort coordinates
             if (x2 < x1) {
+                System.out.println("I came here 4");
                 int tmp = x1;
                 x1 = x2;
                 x2 = tmp;
             }
             if (y2 < y1) {
+                System.out.println("I came here 5");
                 int tmp = y1;
                 y1 = y2;
                 y2 = tmp;
             }
+            System.out.println("I came after 3");
             validateShipLocation(type.getName(), type.getNumberOfCells(), x1, x2, y1, y2);
+            System.out.println("I came here 6");
             checkIfShipsCanBePlaced(player,x1,x2,y1,y2);
             place(player,type,x1,x2,y1,y2);
-        } catch (NullPointerException | NumberFormatException | IndexOutOfBoundsException e) {
-            throw new WrongCoordinatesException();
+        } catch (NullPointerException | NumberFormatException | IndexOutOfBoundsException |
+                WrongCoordinatesException| BadCoordinateLengthException | WrongShipLocation e) {
+            flag = false;
+            System.err.println("Error! : "+e.getMessage()+" "+e.getCause());
         }
-        return true;
+        return flag;
     }
+
 }

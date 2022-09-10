@@ -10,16 +10,24 @@ public class Main {
         // Write your code here
 
         // Create the two players for the game
-
-        Scanner scanner = new Scanner(System.in);
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        player1.setOpponent(player2);
-        player2.setOpponent(player1);
-        System.out.println(ShipType.values().length);
+        Player firstPlayer = new Player(1);
+        Player secondPlayer = new Player(2);
+        firstPlayer.setOpponent(secondPlayer);
+        secondPlayer.setOpponent(firstPlayer);
         Game game = new Game();
-//        game.placeShip(player1,scanner);
-        game.printGameField(player1);
+
+        try (Scanner scanner = new Scanner(System.in)){
+            game.positionPlayerShips(firstPlayer,scanner);
+            game.positionPlayerShips(secondPlayer,scanner);
+       }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
+
+
+
+
+
 
     }
 }

@@ -7,6 +7,7 @@ class Main {
         int n = scanner.nextInt();
         int [][] output = new int[n][n];
         boolean isSymmetric = true;
+
         for (int row = 0; row < output.length; row++) {
             for (int column = 0; column < output[row].length; column++) {
                 output[row][column] = scanner.nextInt();
@@ -29,4 +30,20 @@ class Main {
         }
     }
 
+//    public static void checkSymmetric(int [][] arr, int n) {
+//        n = arr.length;
+//        String value = "YES";
+//        if (n < 10 ) {
+//            for (int row = 0; row < n; row++) {
+//                for (int col = 0; col < arr[row].length; col++) {
+//                    if (arr[row][col] != arr[col][row]) {
+//                        value = "NO";
+//                        break;
+//                    }
+//                }
+//            }
+//        }
+//
+//        System.out.println(value);
+//    }
 }
